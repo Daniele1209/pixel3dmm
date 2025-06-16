@@ -24,6 +24,11 @@ def run(exp_path, image_dir, start_frame = 0,
         max_bbox : bool = False,
         disable_cropping : bool = False,
         ):
+    # Break early if directory is empty
+    if not os.path.exists(image_dir) or not os.listdir(image_dir):
+        print(f"No images found in {image_dir} or directory does not exist")
+        return
+
     experiment_name = exp_path.split('/')[-1][:-3]
     data_name = exp_path.split('/')[-2]
     config_path = '.experiments.{}.{}'.format(data_name, experiment_name)
@@ -36,24 +41,28 @@ def run(exp_path, image_dir, start_frame = 0,
 
     save_dir = os.path.join(f'{env_paths.CODE_BASE}/src/pixel3dmm/preprocessing/PIPNet/snapshots', cfg.data_name, cfg.experiment_name)
 
-
-
     normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                      std=[0.229, 0.224, 0.225])
     preprocess = transforms.Compose(
         [transforms.Resize((cfg.input_size, cfg.input_size)), transforms.ToTensor(), normalize])
 
+    # Get first image file in directory to use as pid
+    image_files = [f for f in os.listdir(image_dir) if f.endswith('.jpg') or f.endswith('.png')]
+    if not image_files:
+        print("No image files found in directory")
+        return
+        
+    pid = image_files[0]  # Use first image as reference
+    print(f"Using {pid} as reference image")
 
-    #for pid in pids:
-    pid = "FaMoS_180424_03335_TA_selfie_IMG_0092.jpg"
-    pid = "FaMoS_180426_03336_TA_selfie_IMG_0152.jpg"
-
-
-
-    demo_image(image_dir, pid, save_dir, preprocess, cfg, cfg.input_size, cfg.net_stride, cfg.num_nb,
+    result = demo_image(image_dir, pid, save_dir, preprocess, cfg, cfg.input_size, cfg.net_stride, cfg.num_nb,
                            cfg.use_gpu,
                             start_frame=start_frame, vertical_crop=vertical_crop, static_crop=static_crop, max_bbox=max_bbox,
                disable_cropping=disable_cropping)
+    
+    if result is None:
+        print("Face detection failed for all images in the directory")
+        return
 
 
 def unpack_images(base_path, video_or_images_path):
