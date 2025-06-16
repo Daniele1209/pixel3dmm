@@ -131,6 +131,9 @@ class Tracker(object):
     def __init__(self, config,
                  device='cuda:0',
                  ):
+        # Suppress exceptions and fall back to eager mode
+        torch._dynamo.config.suppress_errors = True
+
         self.config = config
         self.device = device
         self.actor_name = self.config.video_name
