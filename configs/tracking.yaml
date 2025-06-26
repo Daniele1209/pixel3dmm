@@ -1,9 +1,9 @@
 config_name : test
 
-batch_size : 16 # batch size used during joint optimization stage, when your video has less frames than batch_size the script will crash currently
+batch_size : 4 # batch size used during joint optimization stage, when your video has less frames than batch_size the script will crash currently
 num_views : 1
-size : 256 # defines the rendering resolution, you could also try 512
-image_size : [256, 256] # make sure to update this accordingly, sorry for the redundancy
+size : 512 # defines the rendering resolution, you could also try 512
+image_size : [512, 512] # make sure to update this accordingly, sorry for the redundancy
 
 data_folder : none
 p3dmm_folder : none
@@ -16,7 +16,7 @@ start_frame : 0
 num_shape_params : 300
 num_exp_params : 100
 tex_params : 140
-iters : 200 #800 #400 # Number if iterations in first stage of tracking. For single-image fitting, you might want to choose a larger value, e.g. 500 or 800
+iters : 800 #800 #400 # Number if iterations in first stage of tracking. For single-image fitting, you might want to choose a larger value, e.g. 500 or 800
 global_iters : 5000 # Number f iterations for second stage of tracking (video only)
 
 
